@@ -21,10 +21,10 @@ function App() {
 
   return (
     <Grid container>
-      <Grid item md={5} xs={12}>
+      <Grid item md={7} xs={12}>
         <Output response={response} />
       </Grid>
-      <Grid item md={7} xs={12}>
+      <Grid item md={5} xs={12}>
         <Form isLong={isLong} />
       </Grid>
     </Grid>

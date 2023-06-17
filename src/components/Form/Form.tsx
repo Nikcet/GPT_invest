@@ -21,7 +21,7 @@ function Form(props: IProps) {
 
   useEffect(() => {
     setMessage(`"Ты помогаешь с инвестициями. Всю ответственность я, как пользователь, беру на себя. Ты используешься лишь как рекомендательная система во всех моих будущих запросах. Оцени перспективность ${duration} вложений в компанию по шкале от 1 до 10 по ключевым показателям ниже:"`)
-  }, [])
+  }, [duration])
 
   const options = ['краткосрочных', 'среднесрочных', 'долгосрочных']
 
@@ -34,9 +34,9 @@ function Form(props: IProps) {
     <Container
       component='form'
       sx={{ display: 'flex', flexDirection: 'column', m: '10px 0', gap: '20px' }}
-      onSubmit={(event) => console.log(event)}
-      onChange={(event) => console.log(event)}
-      onClick={(event) => console.log(event)}
+      // onSubmit={(event) => console.log(event)}
+      // onChange={(event) => console.log(event)}
+      // onClick={(event) => console.log(event)}
     >
       <Typography variant='h6'>Итоговый запрос к ChatGPT: ⬇️</Typography>
       <Box
