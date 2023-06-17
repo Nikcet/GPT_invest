@@ -13,6 +13,3 @@ body {
   justify-content: center;
   align-items: center;
 }
-
-@import url(./App.css);
-@import url(./components/Output/output.css);
