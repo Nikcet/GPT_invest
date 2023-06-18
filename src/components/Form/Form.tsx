@@ -1,42 +1,79 @@
 import React, { useEffect, memo, useState } from 'react';
 // import Container from '@mui/material/Container';
-import { Box, Container, TextField, InputAdornment, Typography, Autocomplete, Card, CardContent, Stack, Button } from '@mui/material';
+import {
+  Box,
+  Container,
+  TextField,
+  InputAdornment,
+  Typography,
+  Autocomplete,
+  Card,
+  CardContent,
+  Stack,
+  Button,
+} from '@mui/material';
 
 interface IProps {
-  isLong: boolean,
+  // isLong: boolean,
+  message: string,
+  handleMessage: (text: string) => void,
+  getResponse: () => void,
 }
 
 function Form(props: IProps) {
 
-  const [marketCap, setMarketCap] = useState<string>('');
-  const [ebitda, setEbitda] = useState<string>('');
-  const [pe, setPe] = useState<string>('');
-  const [ps, setPs] = useState<string>('');
-  const [eps, setEps] = useState<string>('');
-  const [roe, setRoe] = useState<string>('');
-  const [roa, setRoa] = useState<string>('');
+  const [marketCap, setMarketCap] = useState<string | null>('');
+  const [ebitda, setEbitda] = useState<string | null>('');
+  const [pe, setPe] = useState<string | null>('');
+  const [ps, setPs] = useState<string | null>('');
+  const [eps, setEps] = useState<string | null>('');
+  const [roe, setRoe] = useState<string | null>('');
+  const [roa, setRoa] = useState<string | null>('');
+  const [debt, setDebt] = useState<string | null>('');
+  const [profit, setProfit] = useState<string | null>('');
   const [duration, setDuration] = useState<string | null>('');
-  const [inputValue, setInputValue] = useState<string | undefined>('');
-  const [message, setMessage] = useState<string>('');
+  const [inputValue, setInputValue] = useState<string>('');
+  const [currency, setCurrency] = useState<string | null>('₽');
+  // const [message, setMessage] = useState<string>('');
 
   useEffect(() => {
-    setMessage(`"Ты помогаешь с инвестициями. Всю ответственность я, как пользователь, беру на себя. Ты используешься лишь как рекомендательная система во всех моих будущих запросах. Оцени перспективность ${duration} вложений в компанию по шкале от 1 до 10 по ключевым показателям ниже:"`)
-  }, [duration])
+    const content = [
+      marketCap && `Market Cap: ${marketCap} млрд,`,
+      ebitda && `Ebitda: ${ebitda} млрд,`,
+      pe && `P/E: ${pe},`,
+      ps && `P/S: ${ps},`,
+      eps && `Diluted EPS: ${eps}₽,`,
+      roe && `ROE: ${roe}%,`,
+      roa && `ROA: ${roa}%,`,
+      debt && `Debt/Equity: ${debt}%,`,
+      profit && `Net Profit Margin: ${profit}%`
+    ].filter(Boolean).join('\n  ');
 
-  const options = ['краткосрочных', 'среднесрочных', 'долгосрочных']
+    const message = `"Оцени перспективность ${duration} вложений в компанию по шкале от 1 до 10 по ключевым показателям ниже: 
+  ${content}"`;
+
+    props.handleMessage(message);
+  }, [debt, duration, ebitda, eps, marketCap, pe, profit, props, ps, roa, roe]);
+
+  const options = ['краткосрочных', 'среднесрочных', 'долгосрочных'];
+  const currencies = ['₽', '$', '¥']
 
   const handleInputValue = (newValue: string) => {
     setInputValue(newValue);
     setDuration(newValue);
   }
 
+  const handleCurrencyValue = (newValue: string | null) => {
+    if (!newValue) {
+      setCurrency(currencies[0]);
+    } else {
+      setCurrency(newValue);
+    }
+  }
+
   return (
     <Container
-      component='form'
       sx={{ display: 'flex', flexDirection: 'column', m: '10px 0', gap: '20px' }}
-      // onSubmit={(event) => console.log(event)}
-      // onChange={(event) => console.log(event)}
-      // onClick={(event) => console.log(event)}
     >
       <Typography variant='h6'>Итоговый запрос к ChatGPT: ⬇️</Typography>
       <Box
@@ -44,84 +81,116 @@ function Form(props: IProps) {
       >
         <Card>
           <CardContent>
-            <Typography variant="body1">{message}</Typography>
+            <Typography variant="body1">{props.message}</Typography>
           </CardContent>
         </Card>
 
         <Card>
           <CardContent>
-            <Stack spacing={1}>
-              <Autocomplete
-                freeSolo
-                options={options}
-                value={duration}
-                onChange={(event, newValue: string | null) => setDuration(newValue)}
-                inputValue={inputValue}
-                onInputChange={(event, newValue) => handleInputValue(newValue)}
-                // sx={{ width: 300 }}
-                renderInput={(params) => <TextField {...params} label='Продолжительность инвестиций' />}
-              />
+            <form onSubmit={props.getResponse}>
+              <Stack spacing={1}>
+                <Box sx={{ display: 'flex', width: '100%', gap: '10px' }}>
+                  <Autocomplete
+                    sx={{ flexGrow: '1' }}
+                    options={currencies}
+                    value={currency}
+                    onChange={(_, newValue: string | null) => handleCurrencyValue(newValue)}
+                    renderInput={(params) => <TextField {...params} label='Валюта' />}
+                  />
 
-              <TextField
-                label="Market Cap"
-                value={marketCap}
-                onChange={(event) => setMarketCap(event.target.value)}
-                InputProps={{
-                  endAdornment: <InputAdornment position='start' >млрд</InputAdornment>,
-                }}
-              />
+                  <Autocomplete
+                    sx={{ flexGrow: '2' }}
+                    freeSolo
+                    options={options}
+                    value={duration}
+                    onChange={(_, newValue: string | null) => setDuration(newValue)}
+                    inputValue={inputValue}
+                    onInputChange={(_, newValue: string) => handleInputValue(newValue)}
+                    renderInput={(params) => <TextField {...params} label='Продолжительность инвестиций' />}
+                  />
+                </Box>
 
-              <TextField
-                label="Ebitda"
-                value={ebitda}
-                onChange={(event) => setEbitda(event.target.value)}
-                InputProps={{
-                  endAdornment: <InputAdornment position='start' >млрд</InputAdornment>,
-                }}
-              />
+                <TextField
+                  label="Market Cap"
+                  value={marketCap}
+                  onChange={(event) => setMarketCap(event.target.value)}
+                  InputProps={{
+                    endAdornment: <InputAdornment position='start' >{`млрд ${currency}`}</InputAdornment>,
+                  }}
+                />
 
-              <TextField
-                label="P/E"
-                value={pe}
-                onChange={(event) => setPe(event.target.value)}
-              />
+                <TextField
+                  label="Ebitda"
+                  value={ebitda}
+                  onChange={(event) => setEbitda(event.target.value)}
+                  InputProps={{
+                    endAdornment: <InputAdornment position='start' >{`млрд ${currency}`}</InputAdornment>,
+                  }}
+                />
 
-              <TextField
-                label="P/S"
-                value={ps}
-                onChange={(event) => setPs(event.target.value)}
-              />
+                <TextField
+                  label="P/E"
+                  value={pe}
+                  onChange={(event) => setPe(event.target.value)}
+                />
 
-              <TextField
-                label="Diluted EPS"
-                value={eps}
-                onChange={(event) => setEps(event.target.value)}
-                InputProps={{
-                  endAdornment: <InputAdornment position='start' >₽</InputAdornment>,
-                }}
-              />
+                <TextField
+                  label="P/S"
+                  value={ps}
+                  onChange={(event) => setPs(event.target.value)}
+                />
 
-              <TextField
-                label="ROE"
-                value={roe}
-                onChange={(event) => setRoe(event.target.value)}
-                InputProps={{
-                  endAdornment: <InputAdornment position='start' >%</InputAdornment>,
-                }}
-              />
+                <TextField
+                  label="Diluted EPS"
+                  value={eps}
+                  onChange={(event) => setEps(event.target.value)}
+                  InputProps={{
+                    endAdornment: <InputAdornment position='start' >{currency}</InputAdornment>,
+                  }}
+                />
 
-              <TextField
-                label="ROA"
-                value={roa}
-                onChange={(event) => setRoa(event.target.value)}
-                InputProps={{
-                  endAdornment: <InputAdornment position='start' >%</InputAdornment>,
-                }}
-              />
-              <Button
-                variant="contained"
-              >Отправить</Button>
-            </Stack>
+                <TextField
+                  label="ROE"
+                  value={roe}
+                  onChange={(event) => setRoe(event.target.value)}
+                  InputProps={{
+                    endAdornment: <InputAdornment position='start' >%</InputAdornment>,
+                  }}
+                />
+
+                <TextField
+                  label="ROA"
+                  value={roa}
+                  onChange={(event) => setRoa(event.target.value)}
+                  InputProps={{
+                    endAdornment: <InputAdornment position='start' >%</InputAdornment>,
+                  }}
+                />
+
+                <TextField
+                  label="Debt/Equity "
+                  value={debt}
+                  onChange={(event) => setDebt(event.target.value)}
+                  InputProps={{
+                    endAdornment: <InputAdornment position='start' >%</InputAdornment>,
+                  }}
+                />
+
+                <TextField
+                  label="Net Profit Margin"
+                  value={profit}
+                  onChange={(event) => setProfit(event.target.value)}
+                  InputProps={{
+                    endAdornment: <InputAdornment position='start' >%</InputAdornment>,
+                  }}
+                />
+
+                <Button
+                  variant="contained"
+                  onClick={(_) => props.getResponse()}
+                >Отправить</Button>
+              </Stack>
+            </form>
           </CardContent>
         </Card>
       </Box>
