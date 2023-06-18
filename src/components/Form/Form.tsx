@@ -75,7 +75,6 @@ function Form(props: IProps) {
     <Container
       sx={{ display: 'flex', flexDirection: 'column', m: '10px 0', gap: '20px' }}
     >
-      <Typography variant='h6'>Итоговый запрос к ChatGPT: ⬇️</Typography>
       <Box
         sx={{ display: 'flex', flexDirection: 'column', gap: '10px', flexWrap: 'wrap', }}
       >
