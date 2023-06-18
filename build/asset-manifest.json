@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/GPT_invest/static/css/main.e8506add.css",
+    "main.js": "/GPT_invest/static/js/main.0f9b9ef2.js",
+    "static/js/787.9cd347d7.chunk.js": "/GPT_invest/static/js/787.9cd347d7.chunk.js",
+    "index.html": "/GPT_invest/index.html",
+    "main.e8506add.css.map": "/GPT_invest/static/css/main.e8506add.css.map",
+    "main.0f9b9ef2.js.map": "/GPT_invest/static/js/main.0f9b9ef2.js.map",
+    "787.9cd347d7.chunk.js.map": "/GPT_invest/static/js/787.9cd347d7.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e8506add.css",
+    "static/js/main.0f9b9ef2.js"
+  ]
+}
