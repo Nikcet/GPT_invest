@@ -57,7 +57,6 @@ function App() {
 
   return (
     <Container sx={{ maxWidth: '1400px' }}>
-      <Typography variant='h3' sx={{ textAlign: 'center', mb: '50px' }} >GPT Invest</Typography>
       <Grid container>
 
         <Grid item md={5} xs={12}>
