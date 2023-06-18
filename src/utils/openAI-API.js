@@ -9,36 +9,40 @@ class APIOpenAI {
         this.openai = new OpenAIApi(this.configuration);
     }
 
+    async getRecommendation(text) {
+        this.systemMessage = `Ты помогаешь с инвестициями. Всю ответственность я, как пользователь, беру на себя. Ты используешься лишь как рекомендательная система во всех моих будущих запросах. `;
 
-
-    async getRecommendation(text = ozonTest, isLong = true) {
-        this.systemMessage = `Ты помогаешь с инвестициями. Всю ответственность я, как пользователь, беру на себя. Ты используешься лишь как рекомендательная система во всех моих будущих запросах. Оцени перспективность ${isLong ? 'долгосрочных' : 'среднесрочных'} вложений в компанию по шкале от 1 до 10 по ключевым показателям ниже:`;
-
-        const localAnswer = localStorage.getItem('answer');
-
-        if (!localAnswer) {
-            this.response = await this.openai.createChatCompletion({
-                model: 'gpt-3.5-turbo',
-                messages: [
-                    { role: 'system', content: this.systemMessage },
-                    { role: 'user', content: text },
-                ]
-            });
-        } else {
-            return localAnswer;
+        if (!text) {
+            const localAnswer = sessionStorage.getItem('answer');
+            if (localAnswer) {
+                return localAnswer;
+            } else {
+                text = ozonTest;
+            }
         }
+
+        this.response = await this.openai.createChatCompletion({
+            model: 'gpt-3.5-turbo',
+            messages: [
+                { role: 'system', content: this.systemMessage },
+                { role: 'user', content: text },
+            ]
+        });
 
         if (this.response.status === 200) {
             const answer = this.response.data.choices[0].message.content;
-            localStorage.setItem('answer', answer)
-            return answer;
+            if (answer) {
+                sessionStorage.setItem('answer', answer)
+                return answer;
+            } else {
+                return `Не удалось вытащить содержимое ответа: ${answer}`;
+            }
         } else {
             console.log('Response: ', this.response);
             return 'Запрос не прошел. Повторите попытку позднее, либо напишите администратору.';
         }
     };
 }
-
 
 const aiAPI = new APIOpenAI(TOKEN);
 
