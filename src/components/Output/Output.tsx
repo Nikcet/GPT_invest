@@ -1,5 +1,3 @@
-import React, { useEffect, memo, useState } from 'react';
-// import aiAPI from '../../utils/openAI-API';
 import { Container, Box, CircularProgress, Typography, Card, CardContent } from '@mui/material';
 
 interface IProps {
@@ -13,7 +11,6 @@ function Output(props: IProps) {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            height: '100%',
         }}>
             <Box sx={{
                 display: 'flex',
