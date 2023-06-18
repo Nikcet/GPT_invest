@@ -1,9 +1,10 @@
 import React, { useEffect, memo, useState } from 'react';
-import aiAPI from './utils/openAI-API';
+import APIOpenAI from './utils/openAI-API';
 
 import Output from './components/Output/Output';
 import Form from './components/Form/Form';
 import Info from './components/Info/Info';
+import ApiInput from './components/ApiInput/ApiInput';
 import { Container, Grid, Snackbar, Alert, Typography, Divider } from '@mui/material';
 
 // const { Configuration, OpenAIApi } = require("openai");
@@ -14,12 +15,18 @@ function App() {
   const [message, setMessage] = useState<string>('');
   const [errorOpen, setErrorOpen] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('Что-то не так, см в консоль.');
+  const [key, setKey] = useState<string>('');
+  const [api, setApi] = useState<APIOpenAI>(new APIOpenAI(key));
 
   useEffect(() => {
-    aiAPI.getRecommendation()
+    setApi(new APIOpenAI(key));
+  }, [key]);
+
+  useEffect(() => {
+    api.getRecommendation()
       .then((res) => { setResponse(res) })
       .catch((err) => { console.error(err) });
-  }, []);
+  }, [api])
 
   const handleMessage = (text: string) => {
     if (text) {
@@ -30,7 +37,7 @@ function App() {
   const getResponse = () => {
     if (!message) { return };
     setResponse('');
-    aiAPI.getRecommendation(message)
+    api.getRecommendation(message)
       .then((res: string) => {
         if (!res) {
           console.log(res);
@@ -55,6 +62,10 @@ function App() {
     setErrorOpen(false);
   };
 
+  const handleKey = (keyString: string) => {
+    setKey(keyString);
+  }
+
   return (
     <Container sx={{ maxWidth: '1400px' }}>
       <Grid container>
@@ -74,6 +85,10 @@ function App() {
           <Divider />
           <Grid item>
             <Output response={response} />
+          </Grid>
+          <Divider />
+          <Grid item>
+            <ApiInput handleKey={handleKey} key={key} />
           </Grid>
         </Grid>
       </Grid>
