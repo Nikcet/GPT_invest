@@ -1,11 +1,15 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Box,
     Container,
     TextField,
     Card,
     CardContent,
+    InputAdornment,
+    IconButton,
 } from '@mui/material';
+import { VisibilityIcon } from '../../Icons/visibilityIcon';
+import { VisibilityOffIcon } from '../../Icons/visibilityOffIcon';
 
 interface IProps {
     handleKey: (keyString: string) => void,
@@ -14,7 +18,13 @@ interface IProps {
 
 function ApiInput(props: IProps) {
 
-    // const [key, setKey] = useState<string | null>('');
+    const [showPassword, setShowPassword] = useState(false);
+
+    const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+    const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+    };
 
 
     return (
@@ -30,14 +40,26 @@ function ApiInput(props: IProps) {
                             fullWidth
                             label="Open AI API ключ"
                             value={props.key}
-                            type="password"
+                            type={showPassword ? 'text' : 'password'}
                             onChange={(event) => props.handleKey(event.target.value)}
+                            InputProps={{
+                                endAdornment:
+                                    <InputAdornment position="end" >
+                                        <IconButton
+                                            onClick={handleClickShowPassword}
+                                            onMouseDown={handleMouseDownPassword}
+                                        >
+                                            {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                                        </IconButton>
+                                    </InputAdornment>
+
+                            }}
                         />
 
                     </CardContent>
                 </Card>
             </Box>
-        </Container>
+        </Container >
     );
 }
 
