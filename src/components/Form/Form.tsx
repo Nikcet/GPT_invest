@@ -1,5 +1,4 @@
-import React, { useEffect, memo, useState } from 'react';
-// import Container from '@mui/material/Container';
+import { useEffect, useState } from 'react';
 import {
   Box,
   Container,
@@ -14,7 +13,6 @@ import {
 } from '@mui/material';
 
 interface IProps {
-  // isLong: boolean,
   message: string,
   handleMessage: (text: string) => void,
   getResponse: () => void,
@@ -34,7 +32,6 @@ function Form(props: IProps) {
   const [duration, setDuration] = useState<string | null>('');
   const [inputValue, setInputValue] = useState<string>('');
   const [currency, setCurrency] = useState<string | null>('₽');
-  // const [message, setMessage] = useState<string>('');
 
   useEffect(() => {
     const content = [
