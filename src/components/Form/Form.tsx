@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Dispatch, SetStateAction } from 'react';
 import {
   Box,
   Container,
@@ -11,6 +11,7 @@ import {
   Stack,
   Button,
 } from '@mui/material';
+import SendIcon from '@mui/icons-material/Send';
 
 interface IProps {
   message: string,
@@ -20,18 +21,24 @@ interface IProps {
 
 function Form(props: IProps) {
 
-  const [marketCap, setMarketCap] = useState<string | null>('');
-  const [ebitda, setEbitda] = useState<string | null>('');
-  const [pe, setPe] = useState<string | null>('');
-  const [ps, setPs] = useState<string | null>('');
-  const [eps, setEps] = useState<string | null>('');
-  const [roe, setRoe] = useState<string | null>('');
-  const [roa, setRoa] = useState<string | null>('');
-  const [debt, setDebt] = useState<string | null>('');
-  const [profit, setProfit] = useState<string | null>('');
-  const [duration, setDuration] = useState<string | null>('');
+  const [marketCap, setMarketCap] = useState<string | null>(sessionStorage.getItem('marketCap') ?? '');
+  const [ebitda, setEbitda] = useState<string | null>(sessionStorage.getItem('ebitda') ?? '');
+  const [pe, setPe] = useState<string | null>(sessionStorage.getItem('pe') ?? '');
+  const [ps, setPs] = useState<string | null>(sessionStorage.getItem('ps') ?? '');
+  const [eps, setEps] = useState<string | null>(sessionStorage.getItem('eps') ?? '');
+  const [roe, setRoe] = useState<string | null>(sessionStorage.getItem('roe') ?? '');
+  const [roa, setRoa] = useState<string | null>(sessionStorage.getItem('roa') ?? '');
+  const [debt, setDebt] = useState<string | null>(sessionStorage.getItem('debt') ?? '');
+  const [profit, setProfit] = useState<string | null>(sessionStorage.getItem('profit') ?? '');
+  const [duration, setDuration] = useState<string | null>(sessionStorage.getItem('duration') ?? null);
   const [inputValue, setInputValue] = useState<string>('');
-  const [currency, setCurrency] = useState<string | null>('₽');
+  const [currency, setCurrency] = useState<string | null>(sessionStorage.getItem('currency') ?? '₽');
+
+  function handleInput(value: string | null, setValue: Dispatch<SetStateAction<string | null>>, name: string) {
+    if (!value) { return }
+    setValue(value);
+    sessionStorage.setItem(name, value);
+  }
 
   useEffect(() => {
     const content = [
@@ -58,6 +65,7 @@ function Form(props: IProps) {
   const handleInputValue = (newValue: string) => {
     setInputValue(newValue);
     setDuration(newValue);
+    sessionStorage.setItem('duration', newValue);
   }
 
   const handleCurrencyValue = (newValue: string | null) => {
@@ -65,7 +73,13 @@ function Form(props: IProps) {
       setCurrency(currencies[0]);
     } else {
       setCurrency(newValue);
+      sessionStorage.setItem('currency', newValue);
     }
+  }
+
+  const handleSubmit = (event: any) => {
+    event.preventDefault();
+    props.getResponse();
   }
 
   return (
@@ -83,8 +97,8 @@ function Form(props: IProps) {
 
         <Card>
           <CardContent>
-            <form onSubmit={props.getResponse}>
-              <Stack spacing={1}>
+            <form onSubmit={handleSubmit}>
+              <Stack spacing={2}>
                 <Box sx={{ display: 'flex', width: '100%', gap: '10px' }}>
                   <Autocomplete
                     sx={{ flexGrow: '1' }}
@@ -109,7 +123,7 @@ function Form(props: IProps) {
                 <TextField
                   label="Market Cap"
                   value={marketCap}
-                  onChange={(event) => setMarketCap(event.target.value)}
+                  onChange={(event) => handleInput(event.target.value, setMarketCap, 'marketCap')}
                   InputProps={{
                     endAdornment: <InputAdornment position='start' >{`млрд ${currency}`}</InputAdornment>,
                   }}
@@ -118,7 +132,7 @@ function Form(props: IProps) {
                 <TextField
                   label="Ebitda"
                   value={ebitda}
-                  onChange={(event) => setEbitda(event.target.value)}
+                  onChange={(event) => handleInput(event.target.value, setEbitda, 'ebitda')}
                   InputProps={{
                     endAdornment: <InputAdornment position='start' >{`млрд ${currency}`}</InputAdornment>,
                   }}
@@ -127,19 +141,19 @@ function Form(props: IProps) {
                 <TextField
                   label="P/E"
                   value={pe}
-                  onChange={(event) => setPe(event.target.value)}
+                  onChange={(event) => handleInput(event.target.value, setPe, 'pe')}
                 />
 
                 <TextField
                   label="P/S"
                   value={ps}
-                  onChange={(event) => setPs(event.target.value)}
+                  onChange={(event) => handleInput(event.target.value, setPs, 'ps')}
                 />
 
                 <TextField
                   label="Diluted EPS"
                   value={eps}
-                  onChange={(event) => setEps(event.target.value)}
+                  onChange={(event) => handleInput(event.target.value, setEps, 'eps')}
                   InputProps={{
                     endAdornment: <InputAdornment position='start' >{currency}</InputAdornment>,
                   }}
@@ -148,7 +162,7 @@ function Form(props: IProps) {
                 <TextField
                   label="ROE"
                   value={roe}
-                  onChange={(event) => setRoe(event.target.value)}
+                  onChange={(event) => handleInput(event.target.value, setRoe, 'roe')}
                   InputProps={{
                     endAdornment: <InputAdornment position='start' >%</InputAdornment>,
                   }}
@@ -157,7 +171,7 @@ function Form(props: IProps) {
                 <TextField
                   label="ROA"
                   value={roa}
-                  onChange={(event) => setRoa(event.target.value)}
+                  onChange={(event) => handleInput(event.target.value, setRoa, 'roa')}
                   InputProps={{
                     endAdornment: <InputAdornment position='start' >%</InputAdornment>,
                   }}
@@ -166,7 +180,7 @@ function Form(props: IProps) {
                 <TextField
                   label="Debt/Equity "
                   value={debt}
-                  onChange={(event) => setDebt(event.target.value)}
+                  onChange={(event) => handleInput(event.target.value, setDebt, 'debt')}
                   InputProps={{
                     endAdornment: <InputAdornment position='start' >%</InputAdornment>,
                   }}
@@ -175,15 +189,17 @@ function Form(props: IProps) {
                 <TextField
                   label="Net Profit Margin"
                   value={profit}
-                  onChange={(event) => setProfit(event.target.value)}
+                  onChange={(event) => handleInput(event.target.value, setProfit, 'profit')}
                   InputProps={{
                     endAdornment: <InputAdornment position='start' >%</InputAdornment>,
                   }}
                 />
 
                 <Button
+                  type='submit'
                   variant="contained"
                   onClick={(_) => props.getResponse()}
+                  endIcon={<SendIcon />}
                 >Отправить</Button>
               </Stack>
             </form>
