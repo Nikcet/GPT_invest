@@ -13,7 +13,7 @@ import { VisibilityOffIcon } from '../../Icons/visibilityOffIcon';
 
 interface IProps {
     handleKey: (keyString: string) => void,
-    key: string,
+    apiKey: string | null,
 }
 
 function ApiInput(props: IProps) {
@@ -39,7 +39,7 @@ function ApiInput(props: IProps) {
                         <TextField
                             fullWidth
                             label="Open AI API ключ"
-                            value={props.key}
+                            value={props.apiKey ?? ''}
                             type={showPassword ? 'text' : 'password'}
                             onChange={(event) => props.handleKey(event.target.value)}
                             InputProps={{
@@ -52,10 +52,8 @@ function ApiInput(props: IProps) {
                                             {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
                                         </IconButton>
                                     </InputAdornment>
-
                             }}
                         />
-
                     </CardContent>
                 </Card>
             </Box>
