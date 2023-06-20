@@ -1,5 +1,5 @@
 import { Container, Typography, Card, CardContent, Stack } from '@mui/material';
-
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 function Info() {
 
@@ -11,8 +11,9 @@ function Info() {
         }}>
             <Stack sx={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
                 <Card>
-                    <CardContent>
-                        <Typography variant='h6'>Итоговый запрос к ChatGPT: ⬅️</Typography>
+                    <CardContent sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                        <ArrowBackIcon />
+                        <Typography variant='h6'> Итоговый запрос к ChatGPT</Typography>
                     </CardContent>
                 </Card>
                 <Card>
