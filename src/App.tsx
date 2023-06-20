@@ -14,13 +14,24 @@ function App() {
   const [response, setResponse] = useState<string | undefined>('');
   const [message, setMessage] = useState<string>('');
   const [errorOpen, setErrorOpen] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>('Что-то не так, см в консоль.');
-  const [key, setKey] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [key, setKey] = useState<string | null>(sessionStorage.getItem('_api_key'));
   const [api, setApi] = useState<APIOpenAI>(new APIOpenAI(key));
 
   useEffect(() => {
-    setApi(new APIOpenAI(key));
+    if (key) {
+      setApi(new APIOpenAI(key));
+    } else {
+      // setErrorMessage('Нужен ключ от API Open AI, его можно получить тут: "https://platform.openai.com/account/api-keys" (Если вы из РФ, то включите VPN)');
+      setResponse('Нужен ключ от API Open AI, его можно получить тут: "https://platform.openai.com/account/api-keys". Если Вы из РФ, то придется включить VPN.');
+    }
   }, [key]);
+
+  useEffect(() => {
+    if (errorMessage) {
+      setErrorOpen(true);
+    }
+  }, [errorMessage])
 
   useEffect(() => {
     api.getRecommendation()
@@ -40,34 +51,30 @@ function App() {
     api.getRecommendation(message)
       .then((res: string) => {
         if (!res) {
-          console.log(res);
-          handleErrorOpen('Что-то не так, см в консоль.')
-          throw new Error(`Что-то не так: ${res}`)
+          throw new Error(`Что-то не так: ${res}`);
         }
         setResponse(res);
       })
-      .catch((err) => console.error(err))
-  }
-
-  const handleErrorOpen = (text: string) => {
-    setErrorMessage(text);
-    setErrorOpen(true);
+      .catch((err) => {
+        setErrorMessage(`Ошибка: ${err}`);
+        console.error(err);
+      })
   }
 
   const handleErrorClose = (event: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
       return;
     }
-
     setErrorOpen(false);
   };
 
   const handleKey = (keyString: string) => {
     setKey(keyString);
+    sessionStorage.setItem("_api_key", keyString);
   }
 
   return (
-    <Container sx={{ maxWidth: '1400px' }}>
+    <Container sx={{ width: '100%', mt: '140px', pb: '40px' }}>
       <Grid container>
 
         <Grid item md={5} xs={12}>
@@ -88,7 +95,7 @@ function App() {
           </Grid>
           <Divider />
           <Grid item>
-            <ApiInput handleKey={handleKey} key={key} />
+            <ApiInput handleKey={handleKey} apiKey={key} />
           </Grid>
         </Grid>
       </Grid>
