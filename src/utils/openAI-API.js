@@ -1,4 +1,3 @@
-import { TOKEN } from './config.js';
 const { Configuration, OpenAIApi } = require('openai');
 const ozonTest = "Market Cap: 348,73 млрд. ₽; Ebitda: -34,61 млрд. ₽; P/E: −5,15; P/S: 1,4; Diluted EPS: −325,31 ₽; ROE: −337,33%: ROA: −32,26%";
 const greeting = "Поприветствуй пользователя так, как это сделал бы Уоренн Баффет."
