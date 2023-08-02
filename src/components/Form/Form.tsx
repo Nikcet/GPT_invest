@@ -1,10 +1,10 @@
-import { useEffect, useState, Dispatch, SetStateAction } from 'react';
+import { useEffect, useState, Dispatch, SetStateAction, useMemo } from 'react';
 import {
   Box,
   Container,
   TextField,
   InputAdornment,
-  Typography,
+  // Typography,
   Autocomplete,
   Card,
   CardContent,
@@ -19,7 +19,7 @@ interface IProps {
   getResponse: () => void,
 }
 
-function Form(props: IProps) {
+const Form = (props: IProps) => {
 
   const [marketCap, setMarketCap] = useState<string | null>(sessionStorage.getItem('marketCap') ?? '');
   const [ebitda, setEbitda] = useState<string | null>(sessionStorage.getItem('ebitda') ?? '');
@@ -34,33 +34,38 @@ function Form(props: IProps) {
   const [inputValue, setInputValue] = useState<string>('');
   const [currency, setCurrency] = useState<string | null>(sessionStorage.getItem('currency') ?? '₽');
 
+  const content = useMemo(() => {
+    return [
+      marketCap && `Market Cap: ${marketCap} млрд`,
+      ebitda && `Ebitda: ${ebitda} млрд`,
+      pe && `P/E: ${pe}`,
+      ps && `P/S: ${ps}`,
+      eps && `Diluted EPS: ${eps}₽`,
+      roe && `ROE: ${roe}%`,
+      roa && `ROA: ${roa}%`,
+      debt && `Debt/Equity: ${debt}%`,
+      profit && `Net Profit Margin: ${profit}%`
+    ].filter(Boolean).join('\n  ');
+  }, [marketCap, ebitda, pe, ps, eps, roe, roa, debt, profit]);
+
+  const message = useMemo(() => {
+    return `Оцени перспективность ${duration} вложений в компанию по шкале от 1 до 10 по ключевым показателям ниже:
+  ${content}`;
+  }, [content, duration]);
+
+  useEffect(() => {
+    props.handleMessage(message);
+    console.log('message: ', message);
+  }, [props.handleMessage, message, props]);
+
+  const options = ['краткосрочных', 'среднесрочных', 'долгосрочных'];
+  const currencies = ['₽', '$', '¥']
+
   function handleInput(value: string | null, setValue: Dispatch<SetStateAction<string | null>>, name: string) {
     if (!value) { return }
     setValue(value);
     sessionStorage.setItem(name, value);
   }
-
-  useEffect(() => {
-    const content = [
-      marketCap && `Market Cap: ${marketCap} млрд,`,
-      ebitda && `Ebitda: ${ebitda} млрд,`,
-      pe && `P/E: ${pe},`,
-      ps && `P/S: ${ps},`,
-      eps && `Diluted EPS: ${eps}₽,`,
-      roe && `ROE: ${roe}%,`,
-      roa && `ROA: ${roa}%,`,
-      debt && `Debt/Equity: ${debt}%,`,
-      profit && `Net Profit Margin: ${profit}%`
-    ].filter(Boolean).join('\n  ');
-
-    const message = `"Оцени перспективность ${duration} вложений в компанию по шкале от 1 до 10 по ключевым показателям ниже: 
-  ${content}"`;
-
-    props.handleMessage(message);
-  }, [debt, duration, ebitda, eps, marketCap, pe, profit, props, ps, roa, roe]);
-
-  const options = ['краткосрочных', 'среднесрочных', 'долгосрочных'];
-  const currencies = ['₽', '$', '¥']
 
   const handleInputValue = (newValue: string) => {
     setInputValue(newValue);
@@ -89,11 +94,11 @@ function Form(props: IProps) {
       <Box
         sx={{ display: 'flex', flexDirection: 'column', gap: '10px', flexWrap: 'wrap', }}
       >
-        <Card>
+        {/* <Card>
           <CardContent>
             <Typography variant="body1">{props.message}</Typography>
           </CardContent>
-        </Card>
+        </Card> */}
 
         <Card>
           <CardContent>

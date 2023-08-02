@@ -7,7 +7,6 @@ import Info from './components/Info/Info';
 import ApiInput from './components/ApiInput/ApiInput';
 import { Container, Grid, Snackbar, Alert, Typography, Divider } from '@mui/material';
 
-// const { Configuration, OpenAIApi } = require("openai");
 
 function App() {
 
@@ -51,13 +50,19 @@ function App() {
     api.getRecommendation(message)
       .then((res: string) => {
         if (!res) {
+          console.log('res: ', res);
           throw new Error(`Что-то не так: ${res}`);
         }
         setResponse(res);
+
       })
       .catch((err) => {
-        setErrorMessage(`Ошибка: ${err}`);
-        console.error(err);
+        if (err.response.status === 429) {
+          setErrorMessage(`Ошибка ${err.response.status}: Слишком часто отправляете запросы. Можно не более 3-х в минуту.`);
+        } else if (err.response.status === 401) {
+          setErrorMessage(`Ошибка ${err.response.status}: Требуется токен.`);
+        }
+        // console.error(err.response.status, err.response.data.error.message, err.response.data.error.code);
       })
   }
 
@@ -74,7 +79,7 @@ function App() {
   }
 
   return (
-    <Container sx={{ width: '100%', mt: '140px', pb: '40px' }}>
+    <Container sx={{ width: '100%', pb: '40px' }}>
       <Grid container>
 
         <Grid item md={5} xs={12}>
